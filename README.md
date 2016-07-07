@@ -3,14 +3,21 @@ Allows use YAML to describe schema
 
 # Installation
 
-With composer :
+###1. Install the bundle with composer:
+`composer require creonit/propel-schema-converter-bundle`
 
-``` json
+###2. Registers the bundle in your app/AppKernel.php:
+
+``` php
+...
+public function registerBundles()
 {
-    "require": {
-        "creonit/propel-schema-converter-bundle": "dev-master"
-    }
-}
+    $bundles = array(
+        ...
+        new Creonit\PropelSchemaConverterBundle\CreonitPropelSchemaConverterBundle(),
+        ...
+    );
+...
 ```
 
 # Usage
