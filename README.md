@@ -14,8 +14,9 @@ With composer :
 ```
 
 # Usage
+Create a file `BundleDir/Resources/config/schema.yml` and run the command to build the model or migration. File schema.xml will be created automatically.
 
-Create file `BundleDir/Resources/config/schema.yml`
+## Example
 
 ``` yaml
 config:
@@ -47,6 +48,7 @@ database:
       - sortable: {use_scope: true, scope_column: column2}
     
   table2:
+    id: int(10) ~pk
     table_id: int
     column: text = Default value
     column2: int
@@ -57,8 +59,7 @@ database:
       - sortable: column2
     
   table3: 
-    id: int(10) ~pk
-    table_id: int > table.id
-    table2_id: - int > table2.id(setnull cascade)
+    table_id: int pk > table.id
+    table2_id: - int pk > table2.id(setnull cascade)
     
 ```
