@@ -40,6 +40,7 @@ database:
     column3: text key(8)
     column4: tinyint uniq
     column5: bool = 1
+    column6: - datetime
     +unique:
       - column(32)
     +index: [column2]
@@ -60,6 +61,6 @@ database:
     
   table3: 
     table_id: int pk > table.id
-    table2_id: - int pk > table2.id(setnull cascade)
+    table2_id: int pk > table2.id(restrict cascade)
     
 ```
