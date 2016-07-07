@@ -1,4 +1,5 @@
 # PropelSchemaConverterBundle
+Allows use YAML to describe schema
 
 # Installation
 
