@@ -7,7 +7,7 @@
     "propel",
     "schema",
     "yaml",
-    "yml",
+    "yml"
   ],
   "license": "GNU GPLv3",
   "autoload": {
