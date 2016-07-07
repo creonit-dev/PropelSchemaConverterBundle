@@ -6,7 +6,6 @@ With composer :
 
 ``` json
 {
-    ...
     "require": {
         "creonit/propel-schema-converter-bundle": "dev-master"
     }
@@ -16,7 +15,7 @@ With composer :
 # Usage
 Create a file `BundleDir/Resources/config/schema.yml` and run the command to build the model or migration. File schema.xml will be created automatically.
 
-## Example
+## Example `schema.yml`
 
 ``` yaml
 config:
