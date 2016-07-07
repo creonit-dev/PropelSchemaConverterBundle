@@ -8,7 +8,7 @@ With composer :
 {
     ...
     "require": {
-        "gregwar/image": "2.*"
+        "creonit/propel-schema-converter-bundle": "dev-master"
     }
 }
 ```
