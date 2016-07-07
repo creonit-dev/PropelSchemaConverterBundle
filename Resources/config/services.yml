@@ -1,0 +1,2 @@
+parameters:
+    propel.schema_locator.class: Creonit\PropelSchemaConverterBundle\SchemaLocator
