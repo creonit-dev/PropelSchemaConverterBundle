@@ -260,6 +260,7 @@ class SchemaConverter
             }else{
                 switch($behaviorName){
                     case 'i18n':
+                    case 'l10n':
                         $behaviorParameterName = 'i18n_columns';
                         break;
                     default:
