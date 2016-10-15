@@ -177,8 +177,12 @@ class SchemaConverter
                         $foreignXml = $tableXml->addChild('foreign-key');
                         $foreignXml->addAttribute('name', "fk_{$tableName}_{$columnName}_{$match['foreignTable']}");
                         $foreignXml->addAttribute('foreignTable', $match['foreignTable']);
-                        $foreignXml->addAttribute('onDelete', !empty($match['foreignOnDelete']) ? $match['foreignOnDelete'] : ($required ? 'cascade' : 'setnull'));
-                        $foreignXml->addAttribute('onUpdate', !empty($match['foreignOnUpdate']) ? $match['foreignOnUpdate'] : ('cascade'));
+                        if(empty($match['foreignOnDelete']) || 'restrict' != strtolower($match['foreignOnDelete'])){
+                            $foreignXml->addAttribute('onDelete', !empty($match['foreignOnDelete']) ? $match['foreignOnDelete'] : ($required ? 'cascade' : 'setnull'));
+                        }
+                        if(empty($match['foreignOnUpdate']) || 'restrict' != strtolower($match['foreignOnUpdate'])) {
+                            $foreignXml->addAttribute('onUpdate', !empty($match['foreignOnUpdate']) ? $match['foreignOnUpdate'] : ('cascade'));
+                        }
                         $foreignReferenceXml = $foreignXml->addChild('reference');
                         $foreignReferenceXml->addAttribute('local', $columnName);
                         $foreignReferenceXml->addAttribute('foreign', $match['foreignColumn']);
