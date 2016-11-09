@@ -152,7 +152,7 @@ class SchemaConverter
                         $columnXml->addAttribute($columnParameterName, $columnParameter);
                     }
 
-                } else if (preg_match('/^(?P<required>[\-\+]?) *(?P<type>[a-z]+)\(?(?:(?P<size>\d+)(?:\,(?P<scale>\d+))?)?\)?(?:\[(?P<valueSet>[^]]+)\])?(?: +=(?P<default>["\'\S ]+?))?(?: +(?P<autoIncrement>~)?(?P<pk>pk)| +(?P<key>key)\(?(?P<keySize>\d+)?\)?| +(?P<uniq>uniq)\(?(?P<uniqSize>\d+)?\)?)?(?: +> +(?P<foreignTable>[a-z_]+)\.(?P<foreignColumn>[a-z_]+)(?:\((?P<foreignOnDelete>(?:cascade|setnull|restrict|none))(?: +(?P<foreignOnUpdate>(?:cascade|setnull|restrict|none)))?\))?)?$/ui', $column, $match)) {
+                } else if (preg_match('/^(?P<required>[\-\+]?) *(?P<type>[a-z]+)\(?(?:(?P<size>\d+)(?:\,(?P<scale>\d+))?)?\)?(?:\[(?P<valueSet>[^]]+)\])?(?: +=(?P<default>["\'\S ]+?))?(?: +(?P<autoIncrement>~)?(?P<pk>pk)| +(?P<key>key)\(?(?P<keySize>\d+)?\)?| +(?P<uniq>uniq)\(?(?P<uniqSize>\d+)?\)?)?(?: +> +(?P<foreignTable>[a-z0-9_]+)\.(?P<foreignColumn>[a-z0-9_]+)(?:\((?P<foreignOnDelete>(?:cascade|setnull|restrict|none))(?: +(?P<foreignOnUpdate>(?:cascade|setnull|restrict|none)))?\))?)?$/ui', $column, $match)) {
 
                     $columnXml->addAttribute('type', $this->convertType($match['type']));
 
