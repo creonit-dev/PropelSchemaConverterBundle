@@ -10,7 +10,7 @@ class SchemaConverter
 
     const EXTRA_TOKEN = '+';
 
-    public function convert(\SplFileInfo $source)
+    public function convert(\SplFileInfo $source, $target)
     {
         $schema = Yaml::parse(file_get_contents($source->getRealPath()));
 
@@ -152,7 +152,7 @@ class SchemaConverter
                         $columnXml->addAttribute($columnParameterName, $columnParameter);
                     }
 
-                } else if (preg_match('/^(?P<required>[\-\+]?) *(?P<type>[a-z]+)\(?(?:(?P<size>\d+)(?:\,(?P<scale>\d+))?)?\)?(?:\[(?P<valueSet>[^]]+)\])?(?: +=(?P<default>["\'\S ]+?))?(?: +(?P<autoIncrement>~)?(?P<pk>pk)| +(?P<key>key)\(?(?P<keySize>\d+)?\)?| +(?P<uniq>uniq)\(?(?P<uniqSize>\d+)?\)?)?(?: +> +(?P<foreignTable>[a-z0-9_]+)\.(?P<foreignColumn>[a-z0-9_]+)(?:\((?P<foreignOnDelete>(?:cascade|setnull|restrict|none))(?: +(?P<foreignOnUpdate>(?:cascade|setnull|restrict|none)))?\))?)?$/ui', $column, $match)) {
+                } else if (preg_match('/^(?P<required>[\-\+]?) *(?P<type>[a-z]+)\(?(?:(?P<size>\d+)(?:\,(?P<scale>\d+))?)?\)?(?:\[(?P<valueSet>[^]]+)\])?(?: +=(?P<default>["\'\S ]+?))?(?: +(?P<autoIncrement>~)?(?P<pk>pk)| +(?P<key>key)\(?(?P<keySize>\d+)?\)?| +(?P<uniq>uniq)\(?(?P<uniqSize>\d+)?\)?)?(?: +> +(?P<foreignTable>[a-z_]+)\.(?P<foreignColumn>[a-z_]+)(?:\((?P<foreignOnDelete>(?:cascade|setnull|restrict|none))(?: +(?P<foreignOnUpdate>(?:cascade|setnull|restrict|none)))?\))?)?$/ui', $column, $match)) {
 
                     $columnXml->addAttribute('type', $this->convertType($match['type']));
 
@@ -177,12 +177,8 @@ class SchemaConverter
                         $foreignXml = $tableXml->addChild('foreign-key');
                         $foreignXml->addAttribute('name', "fk_{$tableName}_{$columnName}_{$match['foreignTable']}");
                         $foreignXml->addAttribute('foreignTable', $match['foreignTable']);
-                        if(empty($match['foreignOnDelete']) || 'restrict' != strtolower($match['foreignOnDelete'])){
-                            $foreignXml->addAttribute('onDelete', !empty($match['foreignOnDelete']) ? $match['foreignOnDelete'] : ($required ? 'cascade' : 'setnull'));
-                        }
-                        if(empty($match['foreignOnUpdate']) || 'restrict' != strtolower($match['foreignOnUpdate'])) {
-                            $foreignXml->addAttribute('onUpdate', !empty($match['foreignOnUpdate']) ? $match['foreignOnUpdate'] : ('cascade'));
-                        }
+                        $foreignXml->addAttribute('onDelete', !empty($match['foreignOnDelete']) ? $match['foreignOnDelete'] : ($required ? 'cascade' : 'setnull'));
+                        $foreignXml->addAttribute('onUpdate', !empty($match['foreignOnUpdate']) ? $match['foreignOnUpdate'] : ('cascade'));
                         $foreignReferenceXml = $foreignXml->addChild('reference');
                         $foreignReferenceXml->addAttribute('local', $columnName);
                         $foreignReferenceXml->addAttribute('foreign', $match['foreignColumn']);
@@ -232,7 +228,7 @@ class SchemaConverter
 
         }
 
-        $databaseXml->saveXML($source->getPath() . '/' . $source->getBasename($source->getExtension()) . 'xml');
+        $databaseXml->saveXML($target);
     }
 
     protected function convertType($type){
@@ -264,7 +260,6 @@ class SchemaConverter
             }else{
                 switch($behaviorName){
                     case 'i18n':
-                    case 'l10n':
                         $behaviorParameterName = 'i18n_columns';
                         break;
                     default:

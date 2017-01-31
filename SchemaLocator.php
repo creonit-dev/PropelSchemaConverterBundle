@@ -3,40 +3,55 @@
 namespace Creonit\PropelSchemaConverterBundle;
 
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 class SchemaLocator extends \Propel\Bundle\PropelBundle\Service\SchemaLocator
 {
 
-    public function locateFromBundles(array $bundles)
-    {
-        $converter = new SchemaConverter();
+    public function locateFromBundle(BundleInterface $bundle){
+        $finalSchemas = [];
+        $paths = [];
+        $cacheDir = __DIR__ . '/../../../var/propel/schema';
+        $configPath = $bundle->getPath().'/Resources/config';
 
-        foreach ($bundles as $bundle) {
-            foreach ($this->locateSourcesFromBundle($bundle) as $source) {
-                $converter->convert($source);
-            }
+        if(!is_dir($cacheDir)){
+            mkdir($cacheDir, 0777, true);
         }
 
-        return parent::locateFromBundles($bundles);
-    }
+        if(is_dir($configPath)){
+            $paths[] = $configPath;
+        }
 
-    protected function locateSourcesFromBundle(BundleInterface $bundle){
-        $finder = new Finder;
-        $sources = [];
+        if('AppBundle' == $bundle->getName()){
+            $paths[] = $bundle->getPath() . '/../../app/config';
+        }
 
-        if (is_dir($path = $bundle->getPath().'/Resources/config')) {
-            $schemas = $finder->files()->name('*schema.yml')->followLinks()->in($path);
+        if ($paths) {
+            $converter = new SchemaConverter();
 
+            $schemas = (new Finder)->files()->name('*schema.xml')->followLinks()->in($paths);
             if (iterator_count($schemas)) {
                 foreach ($schemas as $schema) {
                     $logicalName = $this->transformToLogicalName($schema, $bundle);
-                    $sources[] = new \SplFileInfo($this->fileLocator->locate($logicalName));
+                    $finalSchema = new \SplFileInfo($this->fileLocator->locate($logicalName));
+                    $finalSchemas[(string) $finalSchema] = [$bundle, $finalSchema];
+                }
+            }
+
+            $schemas = (new Finder)->files()->name('*schema.yml')->followLinks()->in($paths);
+            if (iterator_count($schemas)) {
+                /** @var SplFileInfo $schema */
+                foreach ($schemas as $schema) {
+                    $target = $cacheDir . '/' . $bundle->getName() . '_' . $schema->getBasename($schema->getExtension()) . 'xml';
+                    $converter->convert($schema, $target);
+                    $finalSchema = new \SplFileInfo($this->fileLocator->locate($target));
+                    $finalSchemas[(string) $finalSchema] = [$bundle, $finalSchema];
                 }
             }
         }
 
-        return $sources;
+        return $finalSchemas;
     }
 
 }
