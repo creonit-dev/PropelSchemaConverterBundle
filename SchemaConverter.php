@@ -10,7 +10,7 @@ class SchemaConverter
 
     const EXTRA_TOKEN = '+';
 
-    public function convert(\SplFileInfo $source)
+    public function convert(\SplFileInfo $source, $target)
     {
         $schema = Yaml::parse(file_get_contents($source->getRealPath()));
 
@@ -232,7 +232,7 @@ class SchemaConverter
 
         }
 
-        $databaseXml->saveXML($source->getPath() . '/' . $source->getBasename($source->getExtension()) . 'xml');
+        $databaseXml->saveXML($target);
     }
 
     protected function convertType($type){
