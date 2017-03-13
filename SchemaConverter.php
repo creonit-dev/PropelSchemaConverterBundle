@@ -174,8 +174,12 @@ class SchemaConverter
                     }
 
                     if (!empty($match['foreignTable'])) {
+                        $foreignName = "fk_{$tableName}_{$columnName}_{$match['foreignTable']}";
+                        if(strlen($foreignName) > 64){
+                            $foreignName = 'fk_' . md5($foreignName);
+                        }
                         $foreignXml = $tableXml->addChild('foreign-key');
-                        $foreignXml->addAttribute('name', "fk_{$tableName}_{$columnName}_{$match['foreignTable']}");
+                        $foreignXml->addAttribute('name', $foreignName);
                         $foreignXml->addAttribute('foreignTable', $match['foreignTable']);
                         if(empty($match['foreignOnDelete']) || 'restrict' != strtolower($match['foreignOnDelete'])){
                             $foreignXml->addAttribute('onDelete', !empty($match['foreignOnDelete']) ? $match['foreignOnDelete'] : ($required ? 'cascade' : 'setnull'));
