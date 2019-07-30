@@ -83,6 +83,12 @@ class SchemaConverter
                 foreach ($table[self::EXTRA_TOKEN . 'index'] as $index) {
                     $index = (array) $index;
                     $indexXml = $tableXml->addChild('index');
+
+                    if (0 !== ($indexName = key($index))) {
+                        $indexXml->addAttribute('name', $indexName);
+                        $index = (array)$index[$indexName];
+                    }
+
                     foreach($index as $indexColumn){
                         if(preg_match('/^(\w+)\((\d+)\)$/', $indexColumn, $match)){
                             $indexColumnName = $match[1];
