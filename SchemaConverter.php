@@ -86,7 +86,7 @@ class SchemaConverter
 
                     if (0 !== ($indexName = key($index))) {
                         $indexXml->addAttribute('name', $indexName);
-                        $index = $index[$indexName];
+                        $index = (array)$index[$indexName];
                     }
 
                     foreach($index as $indexColumn){
